@@ -5,11 +5,13 @@ import com.wow.libre.domain.ports.in.jwt.JwtPort;
 import com.wow.libre.domain.shared.GenericResponse;
 import com.wow.libre.domain.shared.jwt.JwtTokenProvider;
 import com.wow.libre.infrastructure.exception.GenericErrorException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -82,6 +84,12 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
       responseBody.setMessage(e.getMessage());
       responseBody.setTransactionId(e.transactionId);
       response.setStatus(e.httpStatus.value());
+      response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+      response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(responseBody));
+    }catch (ExpiredJwtException e) {
+      responseBody.setMessage("Invalid JWT, has expired");
+      responseBody.setCode(401);
+      response.setStatus(HttpStatus.UNAUTHORIZED.value());
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(responseBody));
     }
