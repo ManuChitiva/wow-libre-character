@@ -28,12 +28,12 @@ import static com.wow.libre.domain.model.Constants.HEADER_USERNAME_JWT;
 
 
 @Component
-public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
   private final JwtPort jwtPort;
 
-  public JwtTokenAuthenticationFilter(JwtTokenProvider jwtPort) {
+  public JwtAuthenticationFilter(JwtTokenProvider jwtPort) {
     this.jwtPort = jwtPort;
   }
 

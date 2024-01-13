@@ -1,6 +1,6 @@
 package com.wow.libre.infrastructure.security;
 
-import com.wow.libre.infrastructure.filter.JwtTokenAuthenticationFilter;
+import com.wow.libre.infrastructure.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -9,7 +9,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,10 +27,10 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 public class SecurityConfiguration {
 
-  private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
+  private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-  public SecurityConfiguration(JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter) {
-    this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
+  public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    this.jwtAuthenticationFilter = jwtAuthenticationFilter;
   }
 
   @Bean
@@ -72,7 +71,7 @@ public class SecurityConfiguration {
                             .anyRequest().authenticated())
             .sessionManagement(manager ->
                     manager.sessionCreationPolicy(STATELESS))
-            .addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

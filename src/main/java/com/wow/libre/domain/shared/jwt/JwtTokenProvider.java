@@ -46,7 +46,6 @@ public class JwtTokenProvider implements JwtPort {
             .map(roleMap -> new SimpleGrantedAuthority(roleMap.get("authority")))
             .collect(Collectors.toList());
     return authorities;
-
   }
 
   @Override
