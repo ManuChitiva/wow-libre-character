@@ -12,4 +12,5 @@ public interface ObtainCharacters {
 
   Optional<Character> getCharacter(Long guid, String transactionId);
 
+  List<Character> getCharactersOnline(String transactionId);
 }

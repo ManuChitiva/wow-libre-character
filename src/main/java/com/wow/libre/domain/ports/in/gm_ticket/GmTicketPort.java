@@ -1,7 +1,6 @@
-package com.wow.libre.domain.ports.in.gmTicket;
+package com.wow.libre.domain.ports.in.gm_ticket;
 
 import com.wow.libre.domain.dto.GmTicketDto;
-import com.wow.libre.domain.model.GmTicket;
 
 import java.util.List;
 

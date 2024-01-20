@@ -38,11 +38,11 @@ public class SecurityConfiguration {
     CorsConfiguration corsConfigurationSource = new CorsConfiguration();
     corsConfigurationSource.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000"));
     corsConfigurationSource.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),
-            HttpMethod.POST.name(),
-            HttpMethod.PUT.name(),
-            HttpMethod.DELETE.name()));
+        HttpMethod.POST.name(),
+        HttpMethod.PUT.name(),
+        HttpMethod.DELETE.name()));
     corsConfigurationSource.setAllowedHeaders(List.of(HttpHeaders.CONTENT_TYPE,
-            HttpHeaders.AUTHORIZATION));
+        HttpHeaders.AUTHORIZATION));
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", corsConfigurationSource);
     return source;
@@ -52,26 +52,28 @@ public class SecurityConfiguration {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
-            .cors(withDefaults())
-            .csrf(csrf -> csrf
-                    .ignoringRequestMatchers("/api/resources/country",
-                            "/api/auth/login",
-                            "/api/account",
-                            "/swagger-ui-custom/**",
-                            "/v2/api-docs",
-                            "/configuration/ui",
-                            "/swagger-resources/**",
-                            "/configuration/security",
-                            "/swagger-ui.html",
-                            "/webjars/**",
-                            "/webjars/swagger-ui/**"))
-            .authorizeHttpRequests(request ->
-                    request.requestMatchers("/**")
-                            .permitAll()
-                            .anyRequest().authenticated())
-            .sessionManagement(manager ->
-                    manager.sessionCreationPolicy(STATELESS))
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .cors(withDefaults())
+        .csrf(csrf -> csrf
+            .ignoringRequestMatchers(
+                "/api/characters/number/online",
+                "/api/resources/country",
+                "/api/auth/login",
+                "/api/account",
+                "/swagger-ui-custom/**",
+                "/v2/api-docs",
+                "/configuration/ui",
+                "/swagger-resources/**",
+                "/configuration/security",
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/webjars/swagger-ui/**"))
+        .authorizeHttpRequests(request ->
+            request.requestMatchers("/**")
+                .permitAll()
+                .anyRequest().authenticated())
+        .sessionManagement(manager ->
+            manager.sessionCreationPolicy(STATELESS))
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
@@ -85,7 +87,7 @@ public class SecurityConfiguration {
 
   @Bean
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
-          throws Exception {
+      throws Exception {
     return config.getAuthenticationManager();
   }
 
