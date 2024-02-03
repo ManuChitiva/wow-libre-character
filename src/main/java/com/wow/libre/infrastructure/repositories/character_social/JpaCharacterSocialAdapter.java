@@ -18,8 +18,14 @@ public class JpaCharacterSocialAdapter implements ObtainCharacterSocial {
 
   @Override
   public List<CharacterSocial> getFriends(Long guid, String transactionId) {
-
     return characterSocialRepository.findByGuid(guid).stream().map(this::mapToModel).collect(Collectors.toList());
+  }
+
+  @Override
+  public void deleteFriend(Long guid, Long friendGuid, String transactionId) {
+    characterSocialRepository.findByGuid(guid).stream()
+        .filter(characterSocialEntity -> characterSocialEntity.getFriend().equals(friendGuid))
+        .findFirst().ifPresent(characterSocialRepository::delete);
   }
 
   private CharacterSocial mapToModel(CharacterSocialEntity characterSocialEntity) {

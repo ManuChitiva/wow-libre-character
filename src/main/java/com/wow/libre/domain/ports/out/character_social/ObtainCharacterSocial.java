@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ObtainCharacterSocial {
   List<CharacterSocial> getFriends(Long guid, String transactionId);
+
+  void deleteFriend(Long guid, Long friendGuid, String transactionId);
 }

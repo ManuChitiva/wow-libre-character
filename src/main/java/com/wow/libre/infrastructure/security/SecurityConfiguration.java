@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -51,29 +52,24 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http
-        .cors(withDefaults())
-        .csrf(csrf -> csrf
-            .ignoringRequestMatchers(
-                "/api/characters/number/online",
-                "/api/resources/country",
-                "/api/auth/login",
-                "/api/account",
-                "/swagger-ui-custom/**",
-                "/v2/api-docs",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/security",
-                "/swagger-ui.html",
-                "/webjars/**",
-                "/webjars/swagger-ui/**"))
+
+    http.cors(withDefaults()).csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(request ->
-            request.requestMatchers("/**")
-                .permitAll()
-                .anyRequest().authenticated())
-        .sessionManagement(manager ->
-            manager.sessionCreationPolicy(STATELESS))
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            request.requestMatchers("/api/character/number/online",
+                    "/api/resources/country", "/api/account", "/v2/api-docs",
+                    "/swagger-resources",
+                    "/swagger-resources/**",
+                    "/configuration/ui",
+                    "/configuration/security",
+                    "/swagger-ui.html",
+                    "/webjars/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui/**")
+                .permitAll().anyRequest().authenticated())
+        .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
+        .addFilterBefore(
+            jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
     return http.build();
   }

@@ -1,5 +1,6 @@
 package com.wow.libre.infrastructure.entities;
 
+import com.wow.libre.infrastructure.entities.dto.CharacterSocialId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
@@ -8,7 +9,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-@IdClass(CharacterSocialEntity.class)
+@IdClass(CharacterSocialId.class)
 @Data
 @Entity
 @Table(name = "character_social")

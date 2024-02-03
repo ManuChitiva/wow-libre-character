@@ -75,8 +75,8 @@ public class CharactersController {
   @GetMapping("/{guid}/friends")
   public ResponseEntity<GenericResponse<CharacterSocialDto>> getFriends(
       @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId
-      , @PathVariable final Long guid) {
+      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId,
+      @PathVariable final Long guid) {
 
     CharacterSocialDto character = charactersPort.getFriends(guid, accountId, transactionId);
 
