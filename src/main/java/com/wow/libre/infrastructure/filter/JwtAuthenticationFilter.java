@@ -64,11 +64,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         if (jwtPort.isTokenValid(jwt)) {
-          Collection<GrantedAuthority> autorities = jwtPort.extractRoles(jwt);
+          Collection<GrantedAuthority> authorities = jwtPort.extractRoles(jwt);
 
           UsernamePasswordAuthenticationToken authenticationToken =
                   new UsernamePasswordAuthenticationToken(username, null,
-                          autorities);
+                                                          authorities);
           authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
           SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         }
@@ -86,7 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       response.setStatus(e.httpStatus.value());
       response.setContentType(MediaType.APPLICATION_JSON_VALUE);
       response.getOutputStream().write(new ObjectMapper().writeValueAsBytes(responseBody));
-    }catch (ExpiredJwtException e) {
+    } catch (ExpiredJwtException e) {
       responseBody.setMessage("Invalid JWT, has expired");
       responseBody.setCode(401);
       response.setStatus(HttpStatus.UNAUTHORIZED.value());

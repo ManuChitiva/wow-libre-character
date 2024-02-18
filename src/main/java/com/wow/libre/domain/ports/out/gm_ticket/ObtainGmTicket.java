@@ -1,4 +1,4 @@
-package com.wow.libre.domain.ports.out.gmTicket;
+package com.wow.libre.domain.ports.out.gm_ticket;
 
 import com.wow.libre.domain.model.GmTicket;
 

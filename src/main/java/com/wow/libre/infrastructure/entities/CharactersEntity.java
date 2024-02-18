@@ -1,16 +1,24 @@
 package com.wow.libre.infrastructure.entities;
 
-import jakarta.persistence.*;
+import com.wow.libre.infrastructure.entities.dto.CharacterId;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.io.Serializable;
+
+@IdClass(CharacterId.class)
 @Data
 @Entity
 @Table(name = "characters")
-public class CharactersEntity {
+public class CharactersEntity implements Serializable {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long guid;
+  @Id
   private Long account;
   private String name;
   private Integer race;
@@ -136,5 +144,6 @@ public class CharactersEntity {
   private String deleteInfosName;
   @Column(name = "deletedate")
   private Integer deleteDate;
+
 
 }
