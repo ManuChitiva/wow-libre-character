@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_ID_JWT;
+import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_WEB_ID_JWT;
 import static com.wow.libre.domain.model.Constants.HEADER_TRANSACTION_ID;
 
 @RestController
@@ -29,7 +29,7 @@ public class GmTicketController {
   @GetMapping("/{guid}")
   public ResponseEntity<GenericResponse<List<GmTicketDto>>> get(
       @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId,
+      @RequestHeader(name = HEADER_ACCOUNT_WEB_ID_JWT) final Long accountId,
       @PathVariable final Long guid) {
 
     List<GmTicketDto> tickets = gmTicketPort.getObtain(accountId, guid, transactionId);

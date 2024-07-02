@@ -16,85 +16,90 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_WEB_ID_JWT;
+import static com.wow.libre.domain.model.Constants.HEADER_ROL_JWT_PROP;
+
 @Component
 @Slf4j
 public class JwtTokenProvider implements JwtPort {
 
-  private final JwtProperties jwtProperties;
+    private final JwtProperties jwtProperties;
 
-  public JwtTokenProvider(JwtProperties jwtProperties) {
-    this.jwtProperties = jwtProperties;
-  }
-
-  @Override
-  public String extractAccountId(String token) {
-    final Claims claims = extractAllClaims(token);
-    return (String) claims.get("account_id");
-  }
-
-  @Override
-  public Collection<GrantedAuthority> extractRoles(String token) {
-    Claims claims = extractAllClaims(token);
-
-    Collection<Map<String, String>> rolesAsMap = Optional.ofNullable(claims.get("roles"))
-            .filter(Collection.class::isInstance)
-            .map(Collection.class::cast)
-            .orElse(Collections.emptyList());
-
-    // Convertir los roles a SimpleGrantedAuthority
-    List<GrantedAuthority> authorities = rolesAsMap.stream()
-            .map(roleMap -> new SimpleGrantedAuthority(roleMap.get("authority")))
-            .collect(Collectors.toList());
-    return authorities;
-  }
-
-  @Override
-  public String extractUsername(String token) {
-    return extractClaim(token, Claims::getSubject);
-  }
-
-  private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    final Claims claims = extractAllClaims(token);
-    return claimsResolver.apply(claims);
-  }
-
-
-  @Override
-  public boolean isTokenValid(String token) {
-    return isSignatureValid(token) && !isTokenExpired(token);
-  }
-
-  private boolean isSignatureValid(String token) {
-    try {
-      extractAllClaims(token);
-      return true;
-    } catch (Exception e) {
-      log.error("Error al validar la firma del token: {}", e.getMessage());
-      return false; // La firma no es válida
+    public JwtTokenProvider(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
     }
-  }
 
-  private boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date());
-  }
+    @Override
+    public Integer extractAccountId(String token) {
+        try {
+            final Claims claims = extractAllClaims(token);
+            return (Integer) claims.get(HEADER_ACCOUNT_WEB_ID_JWT);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-  @Override
-  public Date extractExpiration(String token) {
-    return extractClaim(token, Claims::getExpiration);
-  }
+    @Override
+    public Collection<GrantedAuthority> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
 
-  private Claims extractAllClaims(String token) {
-    return Jwts
-            .parser()
-            .setSigningKey(getSignInKey())
-            .build()
-            .parseClaimsJws(token)
-            .getPayload();
-  }
+        Collection<Map<String, String>> rolesAsMap = Optional.ofNullable(claims.get(HEADER_ROL_JWT_PROP))
+                .filter(Collection.class::isInstance)
+                .map(Collection.class::cast)
+                .orElse(Collections.emptyList());
 
-  private Key getSignInKey() {
-    byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
-    return Keys.hmacShaKeyFor(keyBytes);
-  }
+        return rolesAsMap.stream()
+                .map(roleMap -> new SimpleGrantedAuthority(roleMap.get("authority")))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String extractUsername(String token) {
+        return extractClaim(token, Claims::getSubject);
+    }
+
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = extractAllClaims(token);
+        return claimsResolver.apply(claims);
+    }
+
+
+    @Override
+    public boolean isTokenValid(String token) {
+        return isSignatureValid(token) && !isTokenExpired(token);
+    }
+
+    private boolean isSignatureValid(String token) {
+        try {
+            extractAllClaims(token);
+            return true;
+        } catch (Exception e) {
+            log.error("Error al validar la firma del token: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    @Override
+    public Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parser()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getPayload();
+    }
+
+    private Key getSignInKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecretKey());
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
 }

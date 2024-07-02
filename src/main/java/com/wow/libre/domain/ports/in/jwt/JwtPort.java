@@ -11,7 +11,7 @@ import java.util.List;
 public interface JwtPort {
   String extractUsername(String token);
 
-  String extractAccountId(String token);
+  Integer extractAccountId(String token);
 
   boolean isTokenValid(String token);
 

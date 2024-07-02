@@ -9,83 +9,84 @@ import com.wow.libre.domain.shared.GenericResponse;
 import com.wow.libre.domain.shared.GenericResponseBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_ID_JWT;
+import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_WEB_ID_JWT;
 import static com.wow.libre.domain.model.Constants.HEADER_TRANSACTION_ID;
 
 @RestController
-@RequestMapping("/api/character")
+@RequestMapping("/api/characters")
 public class CharactersController {
-  private final CharactersPort charactersPort;
+    private final CharactersPort charactersPort;
 
-  public CharactersController(CharactersPort charactersPort) {
-    this.charactersPort = charactersPort;
-  }
-
-  @GetMapping
-  public ResponseEntity<GenericResponse<CharactersDto>> getCharacters(
-      @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId) {
-
-    CharactersDto characters = charactersPort.getCharacters(accountId, transactionId);
-
-    if (characters != null) {
-      return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharactersDto>(transactionId)
-          .ok(characters).build());
+    public CharactersController(CharactersPort charactersPort) {
+        this.charactersPort = charactersPort;
     }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
+    @GetMapping
+    public ResponseEntity<GenericResponse<CharactersDto>> characters(
+            @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
+            @RequestParam final Long account_id,
+            @RequestHeader(name = HEADER_ACCOUNT_WEB_ID_JWT) final Long accountWebId) {
 
-  @GetMapping("/{guid}")
-  public ResponseEntity<GenericResponse<CharacterDetail>> getCharacter(
-      @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId,
-      @PathVariable final Long guid) {
+        CharactersDto characters = charactersPort.getCharacters(account_id, accountWebId, transactionId);
 
-    CharacterDetail character = charactersPort.getCharacter(guid, accountId, transactionId);
+        if (characters != null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new GenericResponseBuilder<CharactersDto>
+                            (transactionId).ok(characters).build());
+        }
 
-    if (character != null) {
-      return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharacterDetail>(transactionId)
-          .ok(character).build());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
+    @GetMapping("/{guid}/friends")
+    public ResponseEntity<GenericResponse<CharacterSocialDto>> friends(
+            @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
+            @RequestParam final Long account_id,
+            @PathVariable final Long guid,
+            @RequestHeader(name = HEADER_ACCOUNT_WEB_ID_JWT, required = false) final String accountWebId) {
 
-  @GetMapping("/number/online")
-  public ResponseEntity<GenericResponse<CharacterFactionDto>> getNumberCharactersOnline(
-      @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId) {
+        CharacterSocialDto character = charactersPort.getFriends(guid, account_id, transactionId);
 
-    CharacterFactionDto character = charactersPort.getCharactersOnline(transactionId);
+        if (character != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(
+                    new GenericResponseBuilder<CharacterSocialDto>
+                            (transactionId).ok(character).build());
+        }
 
-    if (character != null) {
-      return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharacterFactionDto>(transactionId)
-          .ok(character).build());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
+    @GetMapping("/{guid}")
+    public ResponseEntity<GenericResponse<CharacterDetail>> getCharacter(
+            @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
+            @RequestParam final Long account_id,
+            @PathVariable final Long guid) {
 
-  @GetMapping("/{guid}/friends")
-  public ResponseEntity<GenericResponse<CharacterSocialDto>> getFriends(
-      @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-      @RequestHeader(name = HEADER_ACCOUNT_ID_JWT) final Long accountId,
-      @PathVariable final Long guid) {
+        CharacterDetail character = charactersPort.getCharacter(guid, account_id, transactionId);
 
-    CharacterSocialDto character = charactersPort.getFriends(guid, accountId, transactionId);
+        if (character != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharacterDetail>(transactionId)
+                    .ok(character).build());
+        }
 
-    if (character != null) {
-      return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharacterSocialDto>(transactionId)
-          .ok(character).build());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-  }
+    @GetMapping("/number/online")
+    public ResponseEntity<GenericResponse<CharacterFactionDto>> getNumberCharactersOnline(
+            @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId) {
+
+        CharacterFactionDto character = charactersPort.getCharactersOnline(transactionId);
+
+        if (character != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(new GenericResponseBuilder<CharacterFactionDto>(transactionId)
+                    .ok(character).build());
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 
 }
