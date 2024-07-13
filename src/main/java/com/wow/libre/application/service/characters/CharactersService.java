@@ -9,6 +9,7 @@ import com.wow.libre.domain.model.Character;
 import com.wow.libre.domain.model.CharacterDetail;
 import com.wow.libre.domain.model.CharacterSocial;
 import com.wow.libre.domain.model.CharacterSocialDetail;
+import com.wow.libre.domain.ports.in.auth.AuthPort;
 import com.wow.libre.domain.ports.in.character_social.CharacterSocialPort;
 import com.wow.libre.domain.ports.in.characters.CharactersPort;
 import com.wow.libre.domain.ports.out.characters.ObtainCharacters;
@@ -21,16 +22,20 @@ import java.util.stream.Collectors;
 @Service
 public class CharactersService implements CharactersPort {
     private final ObtainCharacters obtainCharacters;
-
     private final CharacterSocialPort characterSocialPort;
+    private final AuthPort authPort;
 
-    public CharactersService(ObtainCharacters obtainCharacters, CharacterSocialPort characterSocialPort) {
+
+    public CharactersService(ObtainCharacters obtainCharacters, CharacterSocialPort characterSocialPort,
+                             AuthPort authPort) {
         this.obtainCharacters = obtainCharacters;
         this.characterSocialPort = characterSocialPort;
+        this.authPort = authPort;
     }
 
     @Override
     public CharactersDto getCharacters(Long accountId, Long accountWebId, String transactionId) {
+        authPort.verifyAccount(accountId, accountWebId, transactionId);
 
         final List<Character> characterAccount = obtainCharacters.getCharacters(accountId, transactionId);
 
@@ -44,8 +49,9 @@ public class CharactersService implements CharactersPort {
     }
 
     @Override
-    public CharacterDetail getCharacter(Long guid, Long accountId, String transactionId) {
-        return obtainCharacters.getCharacter(guid, accountId, transactionId)
+    public CharacterDetail getCharacter(Long characterId, Long accountId, Long accountWebId, String transactionId) {
+        authPort.verifyAccount(accountId, accountWebId, transactionId);
+        return obtainCharacters.getCharacter(characterId, accountId, transactionId)
                 .map(CharacterDetail::new)
                 .orElse(null);
     }
@@ -70,10 +76,11 @@ public class CharactersService implements CharactersPort {
     }
 
     @Override
-    public CharacterSocialDto getFriends(Long guid, Long accountId, String transactionId) {
+    public CharacterSocialDto getFriends(Long characterId, Long accountId, String transactionId) {
+
         CharacterSocialDto characterSocialDto = new CharacterSocialDto();
 
-        List<CharacterSocial> characterSocials = characterSocialPort.getFriends(guid, accountId, transactionId);
+        List<CharacterSocial> characterSocials = characterSocialPort.getFriends(characterId, accountId, transactionId);
 
         if (Objects.nonNull(characterSocials)) {
 
@@ -89,8 +96,8 @@ public class CharactersService implements CharactersPort {
     }
 
     @Override
-    public CharacterDetail getCharacter(Long guid, String transactionId) {
-        return obtainCharacters.getCharacter(guid, transactionId).map(CharacterDetail::new).orElse(null);
+    public CharacterDetail getCharacter(Long characterId, String transactionId) {
+        return obtainCharacters.getCharacter(characterId, transactionId).map(CharacterDetail::new).orElse(null);
     }
 
 }

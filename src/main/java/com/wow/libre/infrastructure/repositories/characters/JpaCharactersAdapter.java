@@ -26,13 +26,13 @@ public class JpaCharactersAdapter implements ObtainCharacters {
   }
 
   @Override
-  public Optional<Character> getCharacter(Long guid, Long accountId, String transactionId) {
-    return charactersRepository.findByGuidAndAccount(guid, accountId).map(this::mapToModel);
+  public Optional<Character> getCharacter(Long characterId, Long accountId, String transactionId) {
+    return charactersRepository.findByGuidAndAccount(characterId, accountId).map(this::mapToModel);
   }
 
   @Override
-  public Optional<Character> getCharacter(Long guid, String transactionId) {
-    return charactersRepository.findByGuid(guid).map(this::mapToModel);
+  public Optional<Character> getCharacter(Long characterId, String transactionId) {
+    return charactersRepository.findByGuid(characterId).map(this::mapToModel);
   }
 
   @Override

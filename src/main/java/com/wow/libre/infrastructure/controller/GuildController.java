@@ -5,11 +5,11 @@ import com.wow.libre.domain.dto.GuildsDto;
 import com.wow.libre.domain.ports.in.guild.GuildPort;
 import com.wow.libre.domain.shared.GenericResponse;
 import com.wow.libre.domain.shared.GenericResponseBuilder;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static com.wow.libre.domain.model.Constants.HEADER_ACCOUNT_WEB_ID_JWT;
 import static com.wow.libre.domain.model.Constants.HEADER_TRANSACTION_ID;
 
 @RestController
@@ -41,14 +41,27 @@ public class GuildController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<GenericResponse<GuildDto>> guild(
             @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
-            @RequestParam(required = false) final Long account_id,
-            @PathVariable final Long id,
-            @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) final String authorizationHeader) {
+            @PathVariable final Long id) {
 
-        GuildDto guild = guildPort.detail(id, account_id, authorizationHeader, transactionId);
+        GuildDto guild = guildPort.detail(id, transactionId);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new GenericResponseBuilder<GuildDto>(transactionId).ok(guild).build());
+    }
+
+    @PutMapping(path = "/{guild_id}/attach")
+    public ResponseEntity<GenericResponse<Void>> attach(
+            @RequestHeader(name = HEADER_TRANSACTION_ID, required = false) final String transactionId,
+            @RequestParam(name = "account_id", required = false) final Long accountId,
+            @RequestHeader(name = HEADER_ACCOUNT_WEB_ID_JWT, required = false) final Long accountWebId,
+            @PathVariable(name = "guild_id") final Long guildId,
+            @RequestParam(name = "character_id") final Long characterId) {
+
+        guildPort.attach(guildId, accountId, accountWebId, characterId, transactionId);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(new GenericResponseBuilder<Void>(transactionId).ok().build());
     }
 }

@@ -1,14 +1,14 @@
 package com.wow.libre.infrastructure.handler;
 
+import com.wow.libre.domain.exception.GenericErrorException;
 import com.wow.libre.domain.shared.GenericResponse;
 import com.wow.libre.domain.shared.NotNullValuesDto;
-import com.wow.libre.infrastructure.exception.BadRequestException;
-import com.wow.libre.infrastructure.exception.GenericErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -38,6 +38,17 @@ public class ManagerExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
+  @ExceptionHandler(
+          value = {MissingServletRequestParameterException.class
+          })
+  public ResponseEntity<GenericResponse<Void>> missingServletRequestParameterException(MissingServletRequestParameterException e) {
+
+    GenericResponse<Void> response = new GenericResponse<>();
+    response.setMessage(e.getMessage());
+    response.setCode(400);
+
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+  }
 
   @ExceptionHandler(
           value = {
@@ -54,9 +65,9 @@ public class ManagerExceptionHandler {
 
   @ExceptionHandler(
           value = {
-                  BadRequestException.class,
+                  GenericErrorException.class
           })
-  public ResponseEntity<GenericResponse<Void>> unauthorizedException(GenericErrorException e) {
+  public ResponseEntity<GenericResponse<Void>> genericErrors(GenericErrorException e) {
     GenericResponse<Void> response = new GenericResponse<>();
     response.setMessage(e.getMessage() != null ? e.getMessage() : "");
     response.setCode(e.httpStatus.value());

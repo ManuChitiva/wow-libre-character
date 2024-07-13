@@ -4,12 +4,12 @@ import com.wow.libre.domain.dto.GuildDto;
 import com.wow.libre.domain.dto.GuildsDto;
 import com.wow.libre.domain.model.CharacterDetail;
 import com.wow.libre.domain.model.GuildBenefitModel;
+import com.wow.libre.domain.model.GuildMemberModel;
 import com.wow.libre.domain.model.GuildModel;
 import com.wow.libre.domain.ports.in.characters.CharactersPort;
 import com.wow.libre.domain.ports.in.guild.GuildPort;
 import com.wow.libre.domain.ports.in.guild_benefits.GuildBenefitsPort;
 import com.wow.libre.domain.ports.in.guild_member.GuildMemberPort;
-import com.wow.libre.domain.ports.in.jwt.JwtPort;
 import com.wow.libre.domain.ports.out.guild.ObtainGuild;
 import com.wow.libre.infrastructure.entities.GuildEntity;
 import com.wow.libre.infrastructure.exception.NotFoundException;
@@ -26,15 +26,13 @@ public class GuildService implements GuildPort {
     private final GuildMemberPort guildMemberPort;
     private final CharactersPort charactersPort;
     private final GuildBenefitsPort guildBenefitsPort;
-    private final JwtPort jwtPort;
 
     public GuildService(ObtainGuild obtainGuild, GuildMemberPort guildMemberPort, CharactersPort charactersPort,
-                        GuildBenefitsPort guildBenefitsPort, JwtPort jwtPort) {
+                        GuildBenefitsPort guildBenefitsPort) {
         this.obtainGuild = obtainGuild;
         this.guildMemberPort = guildMemberPort;
         this.charactersPort = charactersPort;
         this.guildBenefitsPort = guildBenefitsPort;
-        this.jwtPort = jwtPort;
     }
 
     @Override
@@ -49,13 +47,7 @@ public class GuildService implements GuildPort {
     }
 
     @Override
-    public GuildDto detail(Long guildId, Long accountId, String authorizationHeader, String transactionId) {
-
-        Integer accountWebId = jwtPort.extractAccountId(authorizationHeader);
-
-        if (accountWebId != null) {
-
-        }
+    public GuildDto detail(Long guildId, String transactionId) {
 
         Optional<GuildModel> getGuild = obtainGuild.getGuild(guildId).map(this::mapToModel);
 
@@ -72,6 +64,29 @@ public class GuildService implements GuildPort {
         return new GuildDto(guild.id, guild.name, guild.leaderName, guild.emblemStyle, guild.emblemColor,
                 guild.borderStyle, guild.borderColor, guild.info, guild.motd, guild.createDate, guild.bankMoney,
                 guild.members, guild.logo, guild.bannerPrimary, guild.bannerSecondary, benefits, null);
+    }
+
+    @Override
+    public void attach(Long guildId, Long accountId, Long accountWebId, Long characterId, String transactionId) {
+
+        Optional<GuildModel> getGuild = obtainGuild.getGuild(guildId).map(this::mapToModel);
+
+        if (getGuild.isEmpty()) {
+            throw new NotFoundException("The requested guild does not exist", transactionId);
+        }
+
+        CharacterDetail character = charactersPort.getCharacter(characterId, accountId, accountWebId, "");
+
+        if (character == null) {
+            throw new NotFoundException("The requested characters does not exist", transactionId);
+        }
+
+        GuildMemberModel guildMember = new GuildMemberModel();
+        guildMember.guild = character.getId();
+        guildMember.rank = 4;
+        guildMember.guildId = getGuild.get().id;
+
+        guildMemberPort.saveGuildMember(guildMember, transactionId);
     }
 
 

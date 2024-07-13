@@ -10,5 +10,5 @@ import java.util.List;
 public interface GmTicketRepository extends CrudRepository<GmTicketEntity, Long> {
   Long countByPlayerGuidAndResolved(Long guid, Long resolved);
 
-  List<GmTicketEntity> findByPlayerGuidAndResolvedAndClosedByOrderByIdDesc(long guid, long resolvedBy, long close);
+  List<GmTicketEntity> findByPlayerGuidAndResolvedAndClosedByOrderByIdDesc(long characterId, long resolvedBy, long close);
 }
