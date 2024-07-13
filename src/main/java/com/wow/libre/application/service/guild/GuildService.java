@@ -11,6 +11,7 @@ import com.wow.libre.domain.ports.in.guild.GuildPort;
 import com.wow.libre.domain.ports.in.guild_benefits.GuildBenefitsPort;
 import com.wow.libre.domain.ports.in.guild_member.GuildMemberPort;
 import com.wow.libre.domain.ports.out.guild.ObtainGuild;
+import com.wow.libre.infrastructure.client.TrinityCoreClient;
 import com.wow.libre.infrastructure.entities.GuildEntity;
 import com.wow.libre.infrastructure.exception.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,15 @@ public class GuildService implements GuildPort {
     private final GuildMemberPort guildMemberPort;
     private final CharactersPort charactersPort;
     private final GuildBenefitsPort guildBenefitsPort;
+    private final TrinityCoreClient trinityCoreClient;
 
     public GuildService(ObtainGuild obtainGuild, GuildMemberPort guildMemberPort, CharactersPort charactersPort,
-                        GuildBenefitsPort guildBenefitsPort) {
+                        GuildBenefitsPort guildBenefitsPort, TrinityCoreClient trinityCoreClient) {
         this.obtainGuild = obtainGuild;
         this.guildMemberPort = guildMemberPort;
         this.charactersPort = charactersPort;
         this.guildBenefitsPort = guildBenefitsPort;
+        this.trinityCoreClient = trinityCoreClient;
     }
 
     @Override
@@ -85,7 +88,9 @@ public class GuildService implements GuildPort {
         guildMember.guild = character.getId();
         guildMember.rank = 4;
         guildMember.guildId = getGuild.get().id;
+        trinityCoreClient.executeCommand("server info");
 
+        //trinityCoreClient.executeCommand(String.format("guild invite %s %s", getGuild.get().name, character.getName()));
         guildMemberPort.saveGuildMember(guildMember, transactionId);
     }
 
