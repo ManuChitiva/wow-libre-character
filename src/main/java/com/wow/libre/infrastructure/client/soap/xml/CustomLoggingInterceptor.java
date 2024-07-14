@@ -3,15 +3,20 @@ package com.wow.libre.infrastructure.client.soap.xml;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 public class CustomLoggingInterceptor implements ClientInterceptor {
     @Override
     public boolean handleRequest(MessageContext messageContext) {
         // Log de la solicitud SOAP
         System.out.println("Request XML:");
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            messageContext.getRequest().writeTo(System.out);
-        } catch (Exception e) {
-            e.printStackTrace();
+            messageContext.getRequest().writeTo(os);
+            System.out.println(new String(os.toByteArray()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         System.out.println(); // Salto de línea para claridad
         return true; // Continuar con la ejecución normal

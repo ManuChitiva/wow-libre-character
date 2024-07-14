@@ -14,7 +14,9 @@ import com.wow.libre.domain.ports.out.guild.ObtainGuild;
 import com.wow.libre.infrastructure.client.TrinityCoreClient;
 import com.wow.libre.infrastructure.entities.GuildEntity;
 import com.wow.libre.infrastructure.exception.NotFoundException;
+import jakarta.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import java.time.Instant;
 import java.util.Date;
@@ -88,9 +90,14 @@ public class GuildService implements GuildPort {
         guildMember.guild = character.getId();
         guildMember.rank = 4;
         guildMember.guildId = getGuild.get().id;
-        trinityCoreClient.executeCommand("server info");
+        //trinityCoreClient.executeCommand("server info");
 
-        //trinityCoreClient.executeCommand(String.format("guild invite %s %s", getGuild.get().name, character.getName()));
+
+        try{
+            trinityCoreClient.executeCommand(String.format(".guild invite %s \"%s\"", "Rare", "WowLibre"));
+        } catch (SoapFaultClientException | JAXBException e) {
+            System.out.println("xzxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+        }
         guildMemberPort.saveGuildMember(guildMember, transactionId);
     }
 

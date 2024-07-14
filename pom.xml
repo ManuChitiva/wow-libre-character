@@ -135,9 +135,9 @@
                 </executions>
                 <configuration>
                     <sources>
-                        <source>src/main/resources/soap-request.xsd</source>
+                        <source>src/main/resources/soap-response.xsd</source>
                     </sources>
-                    <packageName>com.wow.libre.infrastructure.client.soap.xml</packageName>
+                    <packageName>com.wow.libre.infrastructure.client.soap.xml.test</packageName>
                 </configuration>
                 <dependencies>
                     <dependency>
