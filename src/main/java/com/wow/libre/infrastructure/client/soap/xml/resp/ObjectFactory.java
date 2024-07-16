@@ -8,15 +8,15 @@ public class ObjectFactory {
     public ObjectFactory() {
     }
 
-    public com.wow.libre.infrastructure.client.soap.xml.resp.Envelope createEnvelope() {
-        return new com.wow.libre.infrastructure.client.soap.xml.resp.Envelope();
+    public Envelope createEnvelope() {
+        return new Envelope();
     }
 
-    public com.wow.libre.infrastructure.client.soap.xml.resp.Envelope.Body createEnvelopeBody() {
+    public Envelope.Body createEnvelopeBody() {
         return new Envelope.Body();
     }
 
-    public com.wow.libre.infrastructure.client.soap.xml.resp.ExecuteCommandResponse createExecuteCommandResponse() {
+    public ExecuteCommandResponse createExecuteCommandResponse() {
         return new ExecuteCommandResponse();
     }
 }

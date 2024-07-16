@@ -40,7 +40,6 @@
             <scope>runtime</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -79,31 +78,13 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Important for class generator -->
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.ws</groupId>
-            <artifactId>spring-ws</artifactId>
-            <version>4.0.11</version>
-            <type>pom</type>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework.ws</groupId>
             <artifactId>spring-ws-core</artifactId>
             <version>4.0.11</version>
         </dependency>
-        <!-- Spring Web Services -->
 
-
-        <!-- Apache HttpClient -->
-        <dependency>
-            <groupId>org.apache.httpcomponents.client5</groupId>
-            <artifactId>httpclient5</artifactId>
-            <version>5.2.1</version> <!-- Ajusta la versión según tu proyecto -->
-        </dependency>
     </dependencies>
 
     <build>
@@ -121,37 +102,7 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>xjc</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sources>
-                        <source>src/main/resources/soap-response.xsd</source>
-                    </sources>
-                    <packageName>com.wow.libre.infrastructure.client.soap.xml.test</packageName>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.glassfish.jaxb</groupId>
-                        <artifactId>jaxb-xjc</artifactId>
-                        <version>4.0.2</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.sun.activation</groupId>
-                        <artifactId>jakarta.activation</artifactId>
-                        <version>1.2.2</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
+
         </plugins>
     </build>
 

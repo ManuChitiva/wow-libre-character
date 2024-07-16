@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @RestControllerAdvice
 public class ManagerExceptionHandler {
 
@@ -62,18 +61,17 @@ public class ManagerExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
   }
-
   @ExceptionHandler(
           value = {
-                  GenericErrorException.class
+                  GenericErrorException.class,
           })
-  public ResponseEntity<GenericResponse<Void>> genericErrors(GenericErrorException e) {
+  public ResponseEntity<GenericResponse<Void>> unauthorizedException(GenericErrorException e) {
+    System.out.println(e.getClass());
     GenericResponse<Void> response = new GenericResponse<>();
     response.setMessage(e.getMessage() != null ? e.getMessage() : "");
     response.setCode(e.httpStatus.value());
     response.setTransactionId(e.transactionId);
     return ResponseEntity.status(e.httpStatus).body(response);
   }
-
 
 }

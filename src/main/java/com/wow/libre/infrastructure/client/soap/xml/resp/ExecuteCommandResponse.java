@@ -1,6 +1,7 @@
 package com.wow.libre.infrastructure.client.soap.xml.resp;
 
 import jakarta.xml.bind.annotation.*;
+import lombok.Data;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -10,6 +11,7 @@ import jakarta.xml.bind.annotation.*;
 @XmlRootElement(
         name = "executeCommandResponse", namespace = "urn:TC"
 )
+@Data
 public class ExecuteCommandResponse {
     @XmlElement(
             required = true
@@ -17,13 +19,5 @@ public class ExecuteCommandResponse {
     protected String result;
 
     public ExecuteCommandResponse() {
-    }
-
-    public String getResult() {
-        return this.result;
-    }
-
-    public void setResult(String value) {
-        this.result = value;
     }
 }

@@ -1,11 +1,11 @@
 package com.wow.libre.application.service.character_social;
 
 
+import com.wow.libre.domain.exception.BadRequestException;
 import com.wow.libre.domain.model.CharacterSocial;
 import com.wow.libre.domain.ports.in.character_social.CharacterSocialPort;
 import com.wow.libre.domain.ports.out.character_social.ObtainCharacterSocial;
 import com.wow.libre.domain.ports.out.characters.ObtainCharacters;
-import com.wow.libre.infrastructure.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

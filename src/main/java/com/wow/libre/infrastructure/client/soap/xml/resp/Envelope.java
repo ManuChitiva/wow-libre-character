@@ -1,6 +1,7 @@
 package com.wow.libre.infrastructure.client.soap.xml.resp;
 
 import jakarta.xml.bind.annotation.*;
+import lombok.Data;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(
@@ -10,6 +11,7 @@ import jakarta.xml.bind.annotation.*;
 @XmlRootElement(
         name = "Envelope" ,namespace = "http://schemas.xmlsoap.org/soap/envelope/"
 )
+@Data
 public class Envelope {
     @XmlElement(
             name = "Body",
@@ -20,19 +22,12 @@ public class Envelope {
     public Envelope() {
     }
 
-    public Body getBody() {
-        return this.body;
-    }
-
-    public void setBody(Body value) {
-        this.body = value;
-    }
-
     @XmlAccessorType(XmlAccessType.FIELD)
     @XmlType(
             name = "",
             propOrder = {"executeCommandResponse"}
     )
+    @Data
     public static class Body {
         @XmlElement(
                 required = true, namespace = "urn:TC"
@@ -40,14 +35,6 @@ public class Envelope {
         protected ExecuteCommandResponse executeCommandResponse;
 
         public Body() {
-        }
-
-        public ExecuteCommandResponse getExecuteCommandResponse() {
-            return this.executeCommandResponse;
-        }
-
-        public void setExecuteCommandResponse(ExecuteCommandResponse value) {
-            this.executeCommandResponse = value;
         }
     }
 }

@@ -1,10 +1,10 @@
 package com.wow.libre.infrastructure.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wow.libre.domain.exception.GenericErrorException;
 import com.wow.libre.domain.ports.in.jwt.JwtPort;
 import com.wow.libre.domain.shared.GenericResponse;
 import com.wow.libre.domain.shared.jwt.JwtTokenProvider;
-import com.wow.libre.infrastructure.exception.GenericErrorException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -82,7 +82,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.setStatus(responseWrapper.getStatus());
             response.setContentType(request.getContentType());
             response.getOutputStream().write(responseWrapper.getByteArray());
-
         } catch (GenericErrorException e) {
             responseBody.setMessage(e.getMessage());
             responseBody.setTransactionId(e.transactionId);

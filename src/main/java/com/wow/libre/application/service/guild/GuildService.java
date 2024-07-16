@@ -2,9 +2,10 @@ package com.wow.libre.application.service.guild;
 
 import com.wow.libre.domain.dto.GuildDto;
 import com.wow.libre.domain.dto.GuildsDto;
+import com.wow.libre.domain.exception.InternalException;
+import com.wow.libre.domain.exception.NotFoundException;
 import com.wow.libre.domain.model.CharacterDetail;
 import com.wow.libre.domain.model.GuildBenefitModel;
-import com.wow.libre.domain.model.GuildMemberModel;
 import com.wow.libre.domain.model.GuildModel;
 import com.wow.libre.domain.ports.in.characters.CharactersPort;
 import com.wow.libre.domain.ports.in.guild.GuildPort;
@@ -13,7 +14,6 @@ import com.wow.libre.domain.ports.in.guild_member.GuildMemberPort;
 import com.wow.libre.domain.ports.out.guild.ObtainGuild;
 import com.wow.libre.infrastructure.client.TrinityCoreClient;
 import com.wow.libre.infrastructure.entities.GuildEntity;
-import com.wow.libre.infrastructure.exception.NotFoundException;
 import jakarta.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.soap.client.SoapFaultClientException;
@@ -86,19 +86,13 @@ public class GuildService implements GuildPort {
             throw new NotFoundException("The requested characters does not exist", transactionId);
         }
 
-        GuildMemberModel guildMember = new GuildMemberModel();
-        guildMember.guild = character.getId();
-        guildMember.rank = 4;
-        guildMember.guildId = getGuild.get().id;
-        //trinityCoreClient.executeCommand("server info");
-
-
-        try{
-            trinityCoreClient.executeCommand(String.format(".guild invite %s \"%s\"", "Rare", "WowLibre"));
+        try {
+            trinityCoreClient.executeCommand(String.format(".guild invite %s \"%s\"", character.getName(),
+                    getGuild.get().name));
         } catch (SoapFaultClientException | JAXBException e) {
-            System.out.println("xzxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            throw new InternalException("The request to join the brotherhood could not be made, please check if you" +
+                    " already belong to it", transactionId);
         }
-        guildMemberPort.saveGuildMember(guildMember, transactionId);
     }
 
 
