@@ -11,9 +11,11 @@ public class GuildBenefitModel {
     public final String subTitle;
     public final String description;
     public final String logo;
+    public final String itemId;
+    public final int quantity;
 
     public GuildBenefitModel(Long id, Long guildId, Date acquisitionDate, Date expirationDate, String title,
-                             String subTitle, String description, String logo) {
+                             String subTitle, String description, String logo, String itemId, int quantity) {
         this.id = id;
         this.guildId = guildId;
         this.acquisitionDate = acquisitionDate;
@@ -22,5 +24,7 @@ public class GuildBenefitModel {
         this.subTitle = subTitle;
         this.description = description;
         this.logo = logo;
+        this.itemId = itemId;
+        this.quantity = quantity;
     }
 }

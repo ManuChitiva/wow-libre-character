@@ -19,5 +19,10 @@ public class BenefitEntity {
     private String description;
     @Column(name = "logo")
     private String logo;
-
+    @Column(name = "item_id")
+    private String itemId;
+    private Integer quantity;
+    private boolean status;
+    @Column(name = "link_wow_head")
+    private String linkWowHead;
 }

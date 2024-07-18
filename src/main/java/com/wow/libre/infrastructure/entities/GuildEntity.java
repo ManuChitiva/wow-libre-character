@@ -34,4 +34,6 @@ public class GuildEntity {
     private String bannerPrimary;
     @Column(name = "banner_secondary")
     private String bannerSecondary;
+    @Column(name = "public_access")
+    private boolean publicAccess;
 }

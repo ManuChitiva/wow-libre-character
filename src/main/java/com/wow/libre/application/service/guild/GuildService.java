@@ -2,18 +2,23 @@ package com.wow.libre.application.service.guild;
 
 import com.wow.libre.domain.dto.GuildDto;
 import com.wow.libre.domain.dto.GuildsDto;
+import com.wow.libre.domain.enums.CommandsTrinityCore;
+import com.wow.libre.domain.exception.InternalException;
+import com.wow.libre.domain.exception.NotFoundException;
 import com.wow.libre.domain.model.CharacterDetail;
 import com.wow.libre.domain.model.GuildBenefitModel;
-import com.wow.libre.domain.model.GuildMemberModel;
 import com.wow.libre.domain.model.GuildModel;
+import com.wow.libre.domain.model.ItemQuantityModel;
 import com.wow.libre.domain.ports.in.characters.CharactersPort;
 import com.wow.libre.domain.ports.in.guild.GuildPort;
 import com.wow.libre.domain.ports.in.guild_benefits.GuildBenefitsPort;
 import com.wow.libre.domain.ports.in.guild_member.GuildMemberPort;
 import com.wow.libre.domain.ports.out.guild.ObtainGuild;
+import com.wow.libre.infrastructure.client.TrinityCoreClient;
 import com.wow.libre.infrastructure.entities.GuildEntity;
-import com.wow.libre.infrastructure.exception.NotFoundException;
+import jakarta.xml.bind.JAXBException;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import java.time.Instant;
 import java.util.Date;
@@ -26,13 +31,15 @@ public class GuildService implements GuildPort {
     private final GuildMemberPort guildMemberPort;
     private final CharactersPort charactersPort;
     private final GuildBenefitsPort guildBenefitsPort;
+    private final TrinityCoreClient trinityCoreClient;
 
     public GuildService(ObtainGuild obtainGuild, GuildMemberPort guildMemberPort, CharactersPort charactersPort,
-                        GuildBenefitsPort guildBenefitsPort) {
+                        GuildBenefitsPort guildBenefitsPort, TrinityCoreClient trinityCoreClient) {
         this.obtainGuild = obtainGuild;
         this.guildMemberPort = guildMemberPort;
         this.charactersPort = charactersPort;
         this.guildBenefitsPort = guildBenefitsPort;
+        this.trinityCoreClient = trinityCoreClient;
     }
 
     @Override
@@ -57,13 +64,17 @@ public class GuildService implements GuildPort {
 
         GuildModel guild = getGuild.get();
 
-        List<GuildBenefitModel> benefits =
-                guildBenefitsPort.getBenefits(guildId, transactionId).stream()
-                        .filter(benefit -> new Date().before(benefit.expirationDate)).toList();
+        List<GuildBenefitModel> benefits = getGuildBenefit(guildId, transactionId);
 
         return new GuildDto(guild.id, guild.name, guild.leaderName, guild.emblemStyle, guild.emblemColor,
                 guild.borderStyle, guild.borderColor, guild.info, guild.motd, guild.createDate, guild.bankMoney,
-                guild.members, guild.logo, guild.bannerPrimary, guild.bannerSecondary, benefits, null);
+                guild.members, guild.logo, guild.bannerPrimary, guild.bannerSecondary, benefits, null,
+                guild.publicAccess);
+    }
+
+    private List<GuildBenefitModel> getGuildBenefit(Long guildId, String transactionId) {
+        return guildBenefitsPort.getBenefits(guildId, transactionId).stream()
+                .filter(benefit -> new Date().before(benefit.expirationDate)).toList();
     }
 
     @Override
@@ -74,6 +85,11 @@ public class GuildService implements GuildPort {
         if (getGuild.isEmpty()) {
             throw new NotFoundException("The requested guild does not exist", transactionId);
         }
+        GuildModel guild = getGuild.get();
+
+        if (!guild.publicAccess) {
+            throw new InternalException("The brotherhood is currently not public", transactionId);
+        }
 
         CharacterDetail character = charactersPort.getCharacter(characterId, accountId, accountWebId, "");
 
@@ -81,12 +97,27 @@ public class GuildService implements GuildPort {
             throw new NotFoundException("The requested characters does not exist", transactionId);
         }
 
-        GuildMemberModel guildMember = new GuildMemberModel();
-        guildMember.guild = character.getId();
-        guildMember.rank = 4;
-        guildMember.guildId = getGuild.get().id;
+        List<ItemQuantityModel> items =
+                getGuildBenefit(guildId, transactionId).stream().map(benefit -> new ItemQuantityModel(benefit.itemId,
+                        benefit.quantity)).toList();
 
-        guildMemberPort.saveGuildMember(guildMember, transactionId);
+        final String message = String.format("%s Te da la bienvenida.", guild.name);
+        final String body = guild.motd;
+
+        try {
+            trinityCoreClient.executeCommand(CommandsTrinityCore.invite(character.getName(), getGuild.get().name));
+            if (!items.isEmpty()) {
+                trinityCoreClient.executeCommand(CommandsTrinityCore.sendItems(character.getName(), message,
+                        body, items));
+            } else {
+                trinityCoreClient.executeCommand(CommandsTrinityCore.sendMail(character.getName(), message,
+                        body));
+            }
+        } catch (SoapFaultClientException | JAXBException e) {
+            throw new InternalException("The request to join the brotherhood could not be made, please check if " +
+                    "you" +
+                    " already belong to it", transactionId);
+        }
     }
 
 
@@ -99,6 +130,6 @@ public class GuildService implements GuildPort {
                 guildEntity.getEmblemStyle(), guildEntity.getEmblemColor(), guildEntity.getBorderStyle(),
                 guildEntity.getBorderColor(), guildEntity.getInfo(), guildEntity.getMotd(),
                 dateCreate, guildEntity.getBankMoney(), members, guildEntity.getLogo(),
-                guildEntity.getBannerPrimary(), guildEntity.getBannerSecondary());
+                guildEntity.getBannerPrimary(), guildEntity.getBannerSecondary(), guildEntity.isPublicAccess());
     }
 }

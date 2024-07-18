@@ -22,9 +22,11 @@ public class GuildModel {
 
     public final String bannerPrimary;
     public final String bannerSecondary;
+    public final  boolean publicAccess;
+
     public GuildModel(Long id, String name, String leaderName, Long emblemStyle, Long emblemColor,
                       Long borderStyle, Long borderColor, String info, String motd, Date createDate, Long bankMoney,
-                      Long members, String logo, String bannerPrimary, String bannerSecondary) {
+                      Long members, String logo, String bannerPrimary, String bannerSecondary, boolean publicAccess) {
         this.id = id;
         this.name = name;
         this.leaderName = leaderName;
@@ -40,5 +42,6 @@ public class GuildModel {
         this.logo = logo;
         this.bannerPrimary = bannerPrimary;
         this.bannerSecondary = bannerSecondary;
+        this.publicAccess = publicAccess;
     }
 }

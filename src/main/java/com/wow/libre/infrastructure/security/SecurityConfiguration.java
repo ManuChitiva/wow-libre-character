@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                         request.requestMatchers("/api/characters/number/online",
                                         "/api/guilds",
                                         "/api/guilds/{id}",
+                                        "/api/benefits",
                                         "/v2/api-docs",
                                         "/swagger-resources",
                                         "/swagger-resources/**",

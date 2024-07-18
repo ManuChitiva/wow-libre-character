@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="urn:TC">
-    <SOAP-ENV:Body>
-        <ns1:executeCommand>
-            <command>add item 54811</command>
-        </ns1:executeCommand>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
