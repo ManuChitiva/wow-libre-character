@@ -26,6 +26,7 @@ public class GuildBenefitsService implements GuildBenefitsPort {
     private GuildBenefitModel mapToModel(GuildBenefitEntity benefit) {
         return new GuildBenefitModel(benefit.getId(), benefit.getGuildId(), benefit.getAcquisitionDate(),
                 benefit.getExpirationDate(), benefit.getBenefitId().getTitle(), benefit.getBenefitId().getSubTitle(),
-                benefit.getBenefitId().getDescription(), benefit.getBenefitId().getLogo());
+                benefit.getBenefitId().getDescription(), benefit.getBenefitId().getLogo(),
+                benefit.getBenefitId().getItemId(), benefit.getBenefitId().getQuantity());
     }
 }
