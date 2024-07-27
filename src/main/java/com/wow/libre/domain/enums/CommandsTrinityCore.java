@@ -14,13 +14,13 @@ public class CommandsTrinityCore {
         commandBuilder.append(playerName).append(" \"").append(subject).append("\" \"").append(body).append("\" ");
 
         for (ItemQuantityModel item : items) {
-            commandBuilder.append(item.id).append(":").append(item.quantity).append(" ");
+            commandBuilder.append(item.id()).append(":").append(item.quantity()).append(" ");
         }
 
         return commandBuilder.toString().trim();
     }
 
     public static String sendMail(String playerName, String subject, String body) {
-        return String.format(".send mail %s %s %s", playerName, subject, body);
+        return String.format(".send mail %s \"%s\" \"%s\"", playerName, subject, body);
     }
 }

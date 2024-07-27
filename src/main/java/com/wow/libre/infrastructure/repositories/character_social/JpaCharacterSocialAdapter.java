@@ -3,12 +3,12 @@ package com.wow.libre.infrastructure.repositories.character_social;
 import com.wow.libre.domain.model.CharacterSocial;
 import com.wow.libre.domain.ports.out.character_social.ObtainCharacterSocial;
 import com.wow.libre.infrastructure.entities.CharacterSocialEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
+@Repository
 public class JpaCharacterSocialAdapter implements ObtainCharacterSocial {
   private final CharacterSocialRepository characterSocialRepository;
 

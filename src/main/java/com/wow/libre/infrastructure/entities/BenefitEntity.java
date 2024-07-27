@@ -25,4 +25,6 @@ public class BenefitEntity {
     private boolean status;
     @Column(name = "link_wow_head")
     private String linkWowHead;
+    @Column(name = "benefit_code")
+    private String benefitCode;
 }
