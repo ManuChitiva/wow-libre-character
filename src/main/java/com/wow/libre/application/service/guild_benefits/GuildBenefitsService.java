@@ -27,6 +27,7 @@ public class GuildBenefitsService implements GuildBenefitsPort {
         return new GuildBenefitModel(benefit.getId(), benefit.getGuildId(), benefit.getAcquisitionDate(),
                 benefit.getExpirationDate(), benefit.getBenefitId().getTitle(), benefit.getBenefitId().getSubTitle(),
                 benefit.getBenefitId().getDescription(), benefit.getBenefitId().getLogo(),
-                benefit.getBenefitId().getItemId(), benefit.getBenefitId().getQuantity());
+                benefit.getBenefitId().getItemId(), benefit.getBenefitId().getQuantity(),
+                benefit.getBenefitId().isStatus(), benefit.getBenefitId().getBenefitCode());
     }
 }

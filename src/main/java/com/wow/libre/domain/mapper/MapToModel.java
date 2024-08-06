@@ -8,6 +8,9 @@ import java.time.ZoneOffset;
 
 public class MapToModel {
 
+    private static final int GOLD_VALUE = 10000;
+    private static final int SILVER_VALUE = 100;
+
     public static GmTicket ticket(GmTicketEntity ticket) {
         return GmTicket.builder()
                 .id(ticket.getId())
@@ -30,6 +33,27 @@ public class MapToModel {
                 .viewed(ticket.getViewed() == 1)
                 .resolvedBy(ticket.getResolved() == 1)
                 .build();
+    }
+
+    public static String calculateMoneyString(long money) {
+        long gold = money / GOLD_VALUE;
+        long remainingSilver = money % GOLD_VALUE;
+        long silver = remainingSilver / SILVER_VALUE;
+
+        String goldString = formatGold(gold);
+        return goldString + " " + silver + "s " ;
+    }
+
+    private static String formatGold(long gold) {
+        if (gold >= 1_000_000) {
+            long millionGold = gold / 1_000_000;
+            return millionGold + "M " + (gold % 1_000_000) / 1_000 + "K " + gold % 1_000 + "g";
+        } else if (gold >= 1_000) {
+            long thousandGold = gold / 1_000;
+            return thousandGold + "K " + gold % 1_000 + "g";
+        } else {
+            return gold + "g";
+        }
     }
 
 }
