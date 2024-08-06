@@ -1,4 +1,4 @@
-package com.wow.libre.infrastructure.exception;
+package com.wow.libre.domain.exception;
 
 import org.springframework.http.HttpStatus;
 

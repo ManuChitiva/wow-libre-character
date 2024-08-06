@@ -5,5 +5,5 @@ import com.wow.libre.domain.dto.GmTicketDto;
 import java.util.List;
 
 public interface GmTicketPort {
-  List<GmTicketDto> getObtain(Long accountId, Long guid, String transactionId);
+    List<GmTicketDto> tickets(Long accountId, Long accountWebId, Long characterId, String transactionId);
 }

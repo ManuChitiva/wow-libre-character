@@ -8,9 +8,9 @@ import java.util.Optional;
 public interface ObtainCharacters {
   List<Character> getCharacters(Long accountId, String transactionId);
 
-  Optional<Character> getCharacter(Long guid, Long accountId, String transactionId);
+  Optional<Character> getCharacter(Long characterId, Long accountId, String transactionId);
 
-  Optional<Character> getCharacter(Long guid, String transactionId);
+  Optional<Character> getCharacter(Long characterId, String transactionId);
 
   List<Character> getCharactersOnline(String transactionId);
 }
