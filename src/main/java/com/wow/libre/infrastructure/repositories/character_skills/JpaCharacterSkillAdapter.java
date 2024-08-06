@@ -19,4 +19,5 @@ public class JpaCharacterSkillAdapter implements ObtainCharacterSkills {
     public List<CharacterSkillsEntity> getCharacterIdSkills(Long characterId) {
         return characterSkillsRepository.findByCharacterId(characterId);
     }
+
 }

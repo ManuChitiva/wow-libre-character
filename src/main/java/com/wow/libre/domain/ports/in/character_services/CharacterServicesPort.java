@@ -10,4 +10,9 @@ public interface CharacterServicesPort {
 
     ProfessionServicesModel professionService(Long characterId, Long skillId, String transactionId);
 
+    void create(ProfessionServicesModel professionServicesModel, String transactionId);
+
+    void update(boolean isPublic, String name, String description, Long characterId, Long skillId,
+                String transactionId);
+
 }

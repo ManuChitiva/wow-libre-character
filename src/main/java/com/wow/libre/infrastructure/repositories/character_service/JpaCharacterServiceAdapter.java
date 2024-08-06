@@ -1,6 +1,7 @@
 package com.wow.libre.infrastructure.repositories.character_service;
 
 import com.wow.libre.domain.ports.out.character_services.ObtainCharacterServices;
+import com.wow.libre.domain.ports.out.character_services.SaveCharacterServices;
 import com.wow.libre.infrastructure.entities.CharacterServicesEntity;
 import org.springframework.stereotype.Repository;
 
@@ -8,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class JpaCharacterServiceAdapter implements ObtainCharacterServices {
+public class JpaCharacterServiceAdapter implements ObtainCharacterServices, SaveCharacterServices {
 
     private final CharacterServiceRepository characterServiceRepository;
 
@@ -24,5 +25,10 @@ public class JpaCharacterServiceAdapter implements ObtainCharacterServices {
     @Override
     public Optional<CharacterServicesEntity> getService(Long characterId, Long skillId) {
         return characterServiceRepository.findByCharacterIdAndSkillId(characterId, skillId);
+    }
+
+    @Override
+    public void save(CharacterServicesEntity characterServices, String transactionId) {
+        characterServiceRepository.save(characterServices);
     }
 }
